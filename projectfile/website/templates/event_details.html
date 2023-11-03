@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Multifest</title>
+    <meta name="description" content="Multifest">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"crossorigin="anonymous">
+    <link href="static/style/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+    <!-- Navbar START -->
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand mx-3" class= "active text-left" href="{{ url_for('main.index') }}">Multifest</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto">
+              {% if current_user.is_authenticated %}
+              <li class="nav-item">
+                <span class="nav-link active mx-4">Welcome, {{ current_user.username }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active mx-4" href="{{ url_for('auth.logout') }}">Logout</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active mx-4" href="{{ url_for('main.view_self_event') }}">View your events</a>
+                   </li>
+                   <li class="nav-item">
+                    <a class="nav-link active mx-4" href="{{ url_for('main.allbooking', user_id=current_user.user_id) }}">View your bookings</a>
+                 </li>
+              {% else %}
+                  <li class="nav-item">
+                    <a class="nav-link active  mx-4" href="{{ url_for('auth.login') }}">Login</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active  mx-4" href="{{ url_for('auth.register') }}">Sign up</a>
+                  </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link active mx-4" href="{{ url_for('main.event_create_update') }}">Create events</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    <!-- Navbar END -->
+
+<!-- Event Details Section START -->
+<div class="container my-5">
+  <!-- Event Status -->
+  <div class="mb-3">
+      <span class="{{ event.status_class }}"> {{ event.status }}</span>
+  </div>
+  <!-- Event Image -->
+  <div class="text-center mb-4">
+      <img class="image-center" src="{{ event.image }}" alt="{{ event.event_name }}" style="max-width: 500px; margin: 0 auto; display: block;">
+  </div>
+  <!-- Event Name -->
+  <h2 class="text-center mb-5">{{ event.event_name }}</h2>
+  <!-- Event Description -->
+  <p class="mb-5">{{ event.event_description }}</p>
+  <!-- Event Type and Category -->
+  <h6 class="mb-3">{{ event.event_type }}</h6>
+  <h6 class="mb-5">{{ event.event_category }}</h6>
+  <!-- Organizer and Host Information -->
+  <div class="row">
+      <div class="col-md-6">
+          <b>{{ event.organiser_name }}</b>
+      </div>
+      <div class="col-md-6">
+          <b>{{ event.host_info }}</b>
+      </div>
+  </div>
+  <!-- Date and Time -->
+  <div class="mt-5">
+      <h3>Date and Time</h3>
+      <div class="row">
+          <div class="col-md-6">
+              <h6>Starting:</h6>
+              <p>{{ event.start_date }} at {{ event.start_time }}</p>
+          </div>
+          <div class="col-md-6">
+              <h6>Ending:</h6>
+              <p>{{ event.end_date }} at {{ event.end_time }}</p>
+          </div>
+      </div>
+  </div>
+  <!-- Location -->
+  <div class="mt-5">
+      <h3>Location</h3>
+      <p>{{ event.location }}</p>
+      <p class="text-muted">{{ event.address }}</p>
+  </div>
+  <!-- Tickets Information -->
+  <div class="row mt-5">
+      <div class="col-md-6">
+          <h3>Tickets left</h3>
+          <p>{{ event.tickets }} tickets</p>
+      </div>
+      <div class="col-md-6">
+          <h3>Tickets cost</h3>
+          <p class="text-muted">${{ event.cost }}</p>
+      </div>
+  </div>
+<!-- Event Details Section END -->
+
+<!-- Booking START -->
+  <form method="post" action="{{ url_for('main.booking') }}">
+    <br>
+    <h3>Number Of Tickets</h3>
+    <input type="text" name="no_tickets" />
+    <input type="hidden" name="event_id" value="{{event.event_id}}" />
+    <div class="col border-end d-flex justify-content-center align-items-center">
+      <input name="evtSubmit" class="btn btn-outline-primary" type="submit" value="Book Now" />
+    </div>
+  </form>
+<!-- Booking END -->
+
+<!-- Comment START -->
+<div class="container mt-1 mb-4">
+  <div class="comment-section">
+      <br>
+      <div class="container mt-1 mb-4">
+        <div class="comment-section">
+          <h3>Comments</h3>
+          <form method="post" action="{{ url_for('main.post_comment', event_id=event.event_id) }}">
+            {{ form.hidden_tag() }}
+            {{ form.text(class="form-control me-2", placeholder="Type comment...") }}<br>
+            <input class="btn btn-outline-success" type="submit" value="Post Comment">
+          </form>
+        </div>
+      </div>
+
+      <div class="comment-box">
+        {% for comment in comments %}
+        <div class="comment">
+            <div class="comment-user" style="margin: 25px;">
+                <p class="username" style="font-size: 25px; display: inline-block; vertical-align: middle;">{{ comment.user.username }}</p>
+                <p class="text" style="font-size: 12px;">{{ comment.created_at.strftime('%H:%M%p') }}</p>
+            </div>
+            <p class="comment-text">{{ comment.comment }}</p>
+        </div>
+        {% endfor %}
+      </div>
+  </div>
+<!-- Comment END -->
+  <hr>
+
+<!-- Footer START -->
+  <footer style="margin:20px;">
+  <div class="row">
+    <div class="col">
+      <div class="col-md-6">
+        <div class="text" style="font-weight:bold; font-size: 25px;">Features</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="text" style="font-weight:bold;font-size: 25px;">About</div>
+    </div>
+    <div class="col">
+      <div class="text" style="font-weight:bold;font-size: 25px;">Resource</div>
+    </div>
+    <div class="row">
+        <div class="col">
+          <p class="text"style="font-size:15px;">home<br>
+          settings<br>
+        newsletter<br>
+        artists<br>
+        purchases</p>
+      </div>
+      <div class="col">
+          <p class="text"style="font-size:15px;">home<br>
+          team<br>
+          history<br>
+          creators<br>
+          developers</p>
+      </div>
+      <div class="col">
+        <p class="text"style="font-size:15px;">Resource name<br>
+        company<br>
+        Team<br>
+        artists<br>
+        Purchases made</p>
+    </div>
+    <hr>
+  <div class="container text-center">
+  <p class="text-muted">Copyright &copy; Multifest 2023</p>
+  </div>
+</footer>
+<!-- Footer END -->
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+  crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Multifest</title>
+    <meta name="description" content="Multifest">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"crossorigin="anonymous">
+    <link href="static/style/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+      <!-- Navgiation Bar START -->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand mx-3" class= "active text-left" href="{{ url_for('main.index') }}">Multifest</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto">
+              {% if current_user.is_authenticated %}
+              <li class="nav-item">
+                <span class="nav-link active mx-4">Welcome, {{ current_user.username }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active mx-4" href="{{ url_for('auth.logout') }}">Logout</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active mx-4" href="{{ url_for('main.view_self_event') }}">View your events</a>
+                   </li>
+              {% else %}
+                  <li class="nav-item">
+                    <a class="nav-link active  mx-4" href="{{ url_for('auth.login') }}">Login</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active  mx-4" href="{{ url_for('auth.register') }}">Sign up</a>
+                  </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link active mx-4" href="{{ event_create_update_url }}">Create events</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- Navgiation Bar END -->
+    </header>
+
+  <!-- Update event START -->
+  <h1 class="m-5"><b>Update your event: {{ event.event_name }}</b></h1>
+  <form method="POST" action="{{ url_for('main.event_update', event_id=event.event_id) }}" enctype="multipart/form-data" class="m-5">
+      {{ form.hidden_tag() }}
+      <!-- Basic information section -->
+      <h2 class="m-5"><b>Basic Info</b></h2>
+      <h6 class="font-weight-bold m-5">Name your event and explain why attendees should come.</h6>
+      <p class="m-5"><b>Event Name</p>
+      <div class="form-group m-5">
+          {{ form.event_name(value=event.event_name, class="form-control") }}
+      </div>
+      <div class="form-inline m-5">
+          <div class="form-group m-5">
+            {{ form.event_type(class="form-select", selected=event.event_type) }}
+          </div>
+          <div class="form-group m-5">
+            {{ form.event_category(class="form-select", selected=event.event_category) }}
+          </div>
+      </div>
+      <!-- Description section -->
+      <h2 class="m-5"><b>Description</b></h2>
+      <div class="form-group m-5">
+          {{ form.event_description(value=event.event_description, class="form-control") }}
+      </div>
+      <!-- Organiser section -->
+      <hr>
+      <p class="m-5"><b>Organiser</b></p>
+      <div class="form-group m-5">
+          {{ form.organiser_name(value=event.organiser_name, class="form-control") }}
+      </div>
+      <div class="form-group m-5">
+          {{ form.host_info(value=event.host_info, class="form-control") }}
+      </div>
+      <!-- Date and time section -->
+      <hr>
+      <h2 class="m-5"><b>Date and time</b></h2>
+      <p class="row m-5 col-md-12">Inform people when your event begins and finishes.</p>
+      <div class="form-group m-5">
+          {{ form.start_date.label(class="form-control-label") }}
+          {{ form.start_date(value=event.start_date, class="form-control") }}
+      </div>
+      <div class="form-group m-5">
+          {{ form.start_time.label(class="form-control-label") }}
+          {{ form.start_time(value=event.start_time, class="form-control") }}
+      </div>
+      <div class="form-group m-5">
+          {{ form.end_date.label(class="form-control-label") }}
+          {{ form.end_date(value=event.end_date, class="form-control") }}
+      </div>
+      <div class="form-group m-5">
+          {{ form.end_time.label(class="form-control-label") }}
+          {{ form.end_time(value=event.end_time, class="form-control") }}
+      </div>
+      <!-- Location section -->
+      <hr>
+      <h2 class="m-5"><b>Location</b></h2>
+      <p class="row m-5 col-md-12">Assist attendees in the area to find your event.</p>
+      <div class="form-group m-5">
+          {{ form.location(value=event.location, class="form-control") }}
+      </div>
+      <!-- Media section -->
+      <h2 class="m-5"><b>Media</b></h2>
+      <div class="form-group m-5">
+        <img src="{{ event.image }}" alt="Event Image" style="max-height:300px;">
+        <br><br>
+        <label for="{{ form.image.id }}">Choose an image for the event:</label>
+        {{ form.image(value=event.image, class="m-4 form-control-file", id=form.image.id) }}
+        <hr>
+      </div>
+      <!-- Create tickets section -->
+      <h2 class="m-5"><b>Create tickets</b></h2>
+      <p>Available amount of tickets</p>
+      <div class="form-group">
+          {{ form.tickets(value=event.tickets, class="form-control") }}
+      </div>
+      <br>
+      <p>Ticket price</p>
+      <div class="form-group">
+          {{ form.cost(value=event.cost, class="form-control") }}
+      </div>
+      <br>
+      <div class="col border-end d-flex justify-content-center align-items-center">
+          <button type="submit" class="btn btn-outline-primary">Update event</button>
+      </div>
+  </form>
+  <!-- Update event END -->
+
+  <!-- Footer START-->
+  <footer class="footer">
+    <div class="container text-center">
+        <br>
+        <a class="font-weight-bold text-muted m-2" style="text-decoration:none" href="index.html">Home</a> 
+        <a class="font-weight-bold text-muted m-2" style="text-decoration:none" href="index.html">Find events</a>
+        <a class="font-weight-bold text-muted m-2" style="text-decoration:none" href="event_create_update.html">Create events</a>  
+        <a class="font-weight-bold text-muted m-2" style="text-decoration:none" href="index.html">Contact</a>
+        <a class="font-weight-bold text-muted m-2" style="text-decoration:none" href="index.html">Login</a> 
+    </div>
+    <hr>
+    <div class="container text-center">
+    <p class="text-muted">Copyright &copy; Multifest 2023</p>
+    </div>
+  </footer>
+  <!-- Footer END-->
+
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+  crossorigin="anonymous"></script>
+</body>
+</html>

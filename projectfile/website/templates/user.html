@@ -1,0 +1,28 @@
+{% include "base.html" %}
+{% from "bootstrap5/form.html" import render_form %}
+{% block header %}
+
+<style>
+    body {
+        background-image: url('{{ url_for("static", filename="img/multifest.png") }}');
+        background-size: cover; /* this will cover the entire viewport */
+        background-repeat: no-repeat; /* this will prevent the image from repeating */
+        background-attachment: fixed; /* this will make the background fixed when scrolling */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="login-container">
+    <div class="col-md-6">
+        <h2>{{ heading }}</h2>  <!-- This is the heading on top of the form -->
+        {{render_form(form)}}
+        <!-- When you have a login form, then do show the user a link to register -->
+        {% if heading|lower =='login' %}
+            <p class="mt-2">New user? <a href="{{ url_for('auth.register') }}">Click here to register</a>.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

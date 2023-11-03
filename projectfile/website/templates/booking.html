@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="static/style/style pg4.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+<header>
+    <!-- Navbar START -->
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand mx-3" class= "active text-left" href="{{ url_for('main.index') }}">Multifest</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto">
+              {% if current_user.is_authenticated %}
+              <li class="nav-item">
+                <span class="nav-link active mx-4">Welcome, {{ current_user.username }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active mx-4" href="{{ url_for('auth.logout') }}">Logout</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active mx-4" href="{{ url_for('main.view_self_event') }}">View your events</a>
+                   </li>
+                   <li class="nav-item">
+                    <a class="nav-link active mx-4" href="{{ url_for('main.allbooking', user_id=current_user.user_id) }}">View your bookings</a>
+                 </li>
+              {% else %}
+                  <li class="nav-item">
+                    <a class="nav-link active  mx-4" href="{{ url_for('auth.login') }}">Login</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active  mx-4" href="{{ url_for('auth.register') }}">Sign up</a>
+                  </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link active mx-4" href="{{ event_create_update_url }}">Create events</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- Navbar END -->
+    <h4 class="heading" style="text-decoration: underline; margin:20px;">Booking History</h4>
+</div>
+<main>
+    <!-- Previous tickets/bookinngs START -->
+    <div class="row">
+        <div class="col">
+            <div class="col-lg-8">
+                <div style="width: 50%; align-items: self-start; margin:20px;">
+                    <table class="table table-hover">
+                        <thead>
+                          <tr>
+                              <th scope="col">Event ID</th>
+                              <th scope="col">Event Name</th>
+                              <th scope="col">Purchased Date</th>
+                              <th scope="col">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for booking in bookings %}
+                            <tr>
+                              <th>{{ booking.event_id }}</th>
+                              <td>{{ booking.event_name }}</td>
+                              <td>{{ booking.purchase_date }}</td>
+                              <td>{{ booking.total_cost }}</td>
+                            </tr>
+                          {% else %}
+                            <tr>
+                              <td colspan="2">No events found.</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <hr>
+    <!-- Previous tickets/bookinngs END -->
+
+    <!-- Order details START -->
+    <h5 class="text">Order Details</h5>
+    <section class="h-100">
+        <div class="container py-2 h-100">
+          <div class="row d-flex align-items-center h-100">
+            <div class="col-lg-10 col-xl-8">
+              <div class="card" style="border-radius: 10px;">
+                <div class="card-header px-4 py-5">
+                  <h5 class="text-muted mb-0">Your Orders</h5>
+                </div>
+                <div class="card shadow-0 border mb-4">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-2">
+                          <img src="{{ event.image }}"class="img-fluid" alt="...">
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                          <p class="text-muted mb-0">{{ event.event_name }}</p>
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                          <p class="text-muted mb-0 small">{{ event.start_date }}</p>
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                          <p class="text-muted mb-0 small">Qty: {{no_tickets}}</p>
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                          <p class="text-muted mb-0 small">{{ event.cost }}</p>
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0 small">Purchased at:{{new_booking.purchase_date}}</p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between pt-2">
+                    <p class="fw-bold mb-0" style="margin:10px;">Order Details</p>
+                    <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span> {{new_booking.total_cost}}</p>
+                </div>
+      
+                <div class="d-flex justify-content-between pt-2" style="margin:10px;">
+                    <p class="text-muted mb-0">Invoice Number :{{new_booking.invoice_no}}</p>
+                </div>
+                <div class="d-flex justify-content-between pt-2" style="margin:10px;">
+                    <p class="text-muted mb-0">{{new_booking.event_id}} </p>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <p class="text-muted mb-0" style="margin:10px;">Invoice Date : {{new_booking.invoice_date}}</p>
+                    {% set gst = new_booking.total_cost*0.15 %}
+                    <p class="text-muted mb-0"><span class="fw-bold me-4">GST 15%: {{gst}}</p>
+                </div>
+                <div class="card-footer border-0 px-4 py-5"style="background-color: black; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+                  <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">Total
+                    paid: {{new_booking.total_cost+gst}}</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    <!-- Order details END -->
+
+    <!-- Footer START -->
+      <hr>
+      <footer style="margin:20px;">
+        <div class="row">
+          <div class="col">
+            <div class="col-md-6">
+              <div class="text" style="font-weight:bold; font-size: 25px;">Features</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="text" style="font-weight:bold;font-size: 25px;">About</div>
+          </div>
+          <div class="col">
+            <div class="text" style="font-weight:bold;font-size: 25px;">Resource</div>
+          </div>
+          <div class="row">
+              <div class="col">
+                <p class="text"style="font-size:15px;">home<br>
+                settings<br>
+              newsletter<br>
+              artists<br>
+              purchases</p>
+            </div>
+            <div class="col">
+                <p class="text"style="font-size:15px;">home<br>
+                team<br>
+                history<br>
+                creators<br>
+                developers</p>
+            </div>
+            <div class="col">
+              <p class="text"style="font-size:15px;">Resource name<br>
+              company<br>
+              Team<br>
+              artists<br>
+              Purchases made</p>
+          </div>
+          <hr>
+        <div class="container text-center">
+        <p class="text-muted">Copyright &copy; Multifest 2023</p>
+        </div>
+      </footer>
+    <!-- Footer END -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</main>
+</html>

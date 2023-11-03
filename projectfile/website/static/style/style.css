@@ -1,0 +1,94 @@
+body {
+  font-family: "Arial";
+  color: black;
+  overflow-x: scroll;
+  overflow-y: scroll;
+}
+
+label.one {
+  text-indent: 50px;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.big_input { 
+  height: 100px; border: 1px solid #999999; 
+}
+
+.status1 {
+  color: green; 
+}
+
+.status2 {
+  color: red; 
+}
+
+.status3 {
+  color: orange; 
+}
+
+.status4 {
+  color: gray; 
+}
+
+.status5 {
+  color: red; 
+}
+
+.status6 {
+  color: green; 
+}
+
+.nav-item:hover {
+  background-color: black
+}
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.card-img-top {
+  max-width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+/* .image-center {
+  max-width: 70%;
+  height: 400px;
+  object-fit: cover;
+} */
+
+.image-center {
+  width: 100%;
+  height: auto;
+  display: block; /* Ensures that the image is treated as a block-level element */
+  margin: 0 auto; /* Center the image horizontally by setting left and right margins to auto */
+}
+footer {
+  width: 100%; /* Ensure it spans the full width of the viewport */
+  position: relative; /* Position it relative to its parent */
+  clear: both; /* Clear any floats */
+}
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.container-flex {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* This ensures the container spans the entire height of the viewport */
+}
+
+main {
+  flex: 1; /* This allows the main content to grow and take up all available space */
+}
